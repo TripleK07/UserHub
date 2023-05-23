@@ -5,9 +5,11 @@ using UserHubAPI.Entities.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add dbContext middleware
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//builder.Services.AddDbContext<UserHubContext>(options =>
-//    options.UseNpgsql(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<UserHubContext>(options =>
+    options.UseNpgsql(connectionString));
+// datetime column for postgres
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
 builder.Services.AddControllers();

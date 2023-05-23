@@ -11,13 +11,18 @@ namespace UserHubAPI.Entities.Data
         public UserHubContext(DbContextOptions<UserHubContext> options, IConfiguration configuration)
         : base(options)
 		{
+            _configuration = configuration;
 		}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //you can defined connection here. Now we defined in program.cs
+            /// <summary>
+            /// you can defined connection here. But you cannot run ef commands in terminal.
+            /// So we defined the config in program.cs
+            /// </summary>
+
             //optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
-            optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
+            //optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
