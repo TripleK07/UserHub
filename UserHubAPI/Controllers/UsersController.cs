@@ -20,8 +20,8 @@ namespace UserHubAPI.Controllers
 
         /// <summary>
         /// to use custom route name
-        /// [Route("getUsers")]
         /// </summary>
+        /// <value>[Route("getUsers")]</value>
         [HttpGet(Name = "getUsers")]
         public IActionResult Get()
         {
@@ -89,7 +89,7 @@ namespace UserHubAPI.Controllers
         {
             try
             {
-                var result = _context.Users.SingleOrDefault(x=> x.ID == user.ID && x.RecordStatus == 1);
+                var result = _context.Users.SingleOrDefault(x=> x.ID == user.ID);
                 if (result != null)
                 {
                     result.UserName = user.UserName;
@@ -117,11 +117,11 @@ namespace UserHubAPI.Controllers
         }
 
         [HttpDelete(Name = "deleteUsers")]
-        public IActionResult Delete(Guid userID)
+        public IActionResult Delete(Guid ID)
         {
             try
             {
-                var result = _context.Users.SingleOrDefault(x => x.ID == userID);
+                var result = _context.Users.SingleOrDefault(x => x.ID == ID);
                 if (result != null)
                 {
                     _context.Remove(result);

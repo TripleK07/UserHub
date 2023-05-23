@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-using Swashbuckle.AspNetCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace UserHubAPI.Entities
 {
@@ -30,6 +29,10 @@ namespace UserHubAPI.Entities
         [Required]
         private int _recordStatus;
 
+        /// <summary>
+        /// to show field only in GET Method of swagger
+        /// </summary>
+        /// <value>[SwaggerSchema(ReadOnly = true)]</value>
         public Guid ID { get => _id; set => _id = value; }
 
         public DateTime CreatedDate { get => _createdDate; set => _createdDate = value; }
