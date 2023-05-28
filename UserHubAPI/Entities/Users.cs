@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace UserHubAPI.Entities
 {
@@ -24,6 +25,6 @@ namespace UserHubAPI.Entities
 
         public String LoginID { get => _loginID; set => _loginID = value; }
 
-        public String Email { get => _email; set => _email = value; }
+        public String Email { get => _email; set => _email = value; } 
     }
 }

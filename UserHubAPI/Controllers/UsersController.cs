@@ -1,7 +1,7 @@
-﻿
+﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using UserHubAPI.Entities;
-using UserHubAPI.Entities.Data;
+using UserHubAPI.Services;
 
 namespace UserHubAPI.Controllers
 {
@@ -9,136 +9,52 @@ namespace UserHubAPI.Controllers
     [Route("api/v1/user")]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger _logger;
-        private readonly UserHubContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(ILogger<UsersController> logger, UserHubContext context)
-		{
-             _logger = logger;
-            _context = context;
-		}
+        public UsersController(IUserService userService)
+        {
+            _userService = userService;
+        }
 
         /// <summary>
         /// to use custom route name
         /// </summary>
         /// <value>[Route("getUsers")]</value>
-        [HttpGet(Name = "getUsers")]
-        public IActionResult Get()
+        [HttpGet]
+        [Route("GetUsers")]
+        [ProducesResponseType(200), ProducesResponseType(204)]
+        public async Task<IActionResult> GetUsers()
         {
-            try
-            {
-                IEnumerable<Users> users = _context.Users.AsEnumerable().Where(x => x.RecordStatus == 1).OrderBy(x => x.UserName);
-
-                ///for returning custom response message
-                //return Ok(new ResponseMsg("201", "User created", userList));
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.InnerException, "");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            var users = await _userService.GetAll();
+            return Ok(users);
         }
+
 
         [HttpGet]
-        [Route("getByUserId")]
-        public IActionResult GetByUserId(Guid userId)
+        [Route("GetUserByID")]
+        [ProducesResponseType(200), ProducesResponseType(204)]
+        public async Task<IActionResult> GetUserByID(Guid ID)
         {
-            try
-            {
-                var result = _context.Users.FirstOrDefault(x => x.ID == userId && x.RecordStatus == 1);
-
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                else {
-                    return NoContent();
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.InnerException, "");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            var users = await _userService.GetById(ID);
+            return Ok(users);
         }
 
-        [HttpPost(Name = "addUsers")]
-        public IActionResult Add(Users user)
+        [HttpPost]
+        [Route("AddUser")]
+        [ProducesResponseType(201), ProducesResponseType(400)]
+        public async Task<IActionResult> AddUser(Users user)
         {
-            try
-            {
-                user.CreatedDate = DateTime.Now;
-                user.ModifiedDate = DateTime.Now;
-                user.IsActive = true;
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                return Ok(user);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.InnerException, "");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            var entity = await _userService.Create(user);
+            return CreatedAtAction("GetUserByID", entity.ID,entity);
         }
 
-        [HttpPut(Name = "editUsers")]
-        public IActionResult Edit(Users user)
-        {
-            try
-            {
-                var result = _context.Users.SingleOrDefault(x=> x.ID == user.ID);
-                if (result != null)
-                {
-                    result.UserName = user.UserName;
-                    result.Email = user.Email;
-                    result.IsActive = user.IsActive;
-                    result.RecordStatus = user.RecordStatus;
-                    result.LoginID = user.LoginID;
-                    result.Password = user.Password;
-                    result.ModifiedDate = DateTime.Now;
-
-                    _context.Entry(result).CurrentValues.SetValues(user);
-                    _context.SaveChanges();
-
-                    return Ok(user);
-                }
-                else {
-                    return NoContent();
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.InnerException, "");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        [HttpDelete(Name = "deleteUsers")]
-        public IActionResult Delete(Guid ID)
-        {
-            try
-            {
-                var result = _context.Users.SingleOrDefault(x => x.ID == ID);
-                if (result != null)
-                {
-                    _context.Remove(result);
-                    _context.SaveChanges();
-
-                    return Ok();
-                }
-                else
-                {
-                    return NoContent();
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.InnerException, "");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+        [HttpPut]
+        [Route("EditUser")]
+        [ProducesResponseType(200), ProducesResponseType(400)]
+        public async Task<IActionResult> EditUser(Users user) {
+            await _userService.Update(user);
+            return Ok();
         }
     }
 }
+

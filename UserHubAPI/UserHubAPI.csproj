@@ -26,4 +26,17 @@
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Services\" />
+    <None Remove="Controllers\UsersController %28copy%29.cs" />
+    <None Remove="Controllers\" />
+    <None Remove="Migrations\" />
+    <None Remove="Helper\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Helper\" />
+  </ItemGroup>
 </Project>

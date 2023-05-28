@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 
 namespace UserHubAPI.Entities.Data
@@ -27,8 +28,47 @@ namespace UserHubAPI.Entities.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //if you want customize table name
-            //modelBuilder.Entity<User>().ToTable("tblUser");
+            base.OnModelCreating(modelBuilder);
+
+            //modelBuilder.Entity<Base>().Property(e => e.Autokey)
+            //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var createdDate = entityType.FindProperty("CreatedDate");
+
+                if (createdDate != null && createdDate.ClrType == typeof(DateTime))
+                {
+                    createdDate.SetDefaultValueSql("GETDATE()");
+                }
+
+                var modifiedDate = entityType.FindProperty("ModifiedDate");
+
+                if (modifiedDate != null && modifiedDate.ClrType == typeof(DateTime))
+                {
+                    modifiedDate.SetDefaultValueSql("GETDATE()");
+                }
+            }
+        }
+
+        
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            ChangeTracker.DetectChanges();
+
+            // Exclude auto-incrementing column from updates
+            foreach (var entry in ChangeTracker.Entries<Base>())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    //prevent updating column in Edit condition
+                    entry.Property(e => e.Autokey).IsModified = false;
+                    entry.Property(e => e.CreatedDate).IsModified = false;
+                    entry.Property(e => e.CreatedBy).IsModified = false;
+                }
+            }
+
+            return base.SaveChangesAsync();
         }
 
         //entities
