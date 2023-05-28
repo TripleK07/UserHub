@@ -1,10 +1,13 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserHubAPI.Entities;
+using UserHubAPI.Helper;
 using UserHubAPI.Services;
 
 namespace UserHubAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v1/user")]
     public class UsersController : ControllerBase
@@ -32,6 +35,19 @@ namespace UserHubAPI.Controllers
         {
             var users = await _userService.GetById(ID);
             return Ok(users);
+        }
+
+        [HttpGet]
+        [Route("GetUserByUserName/{username}")]
+        [ProducesResponseType(200), ProducesResponseType(204)]
+        public async Task<IActionResult> GetUserByUserName(String username)
+        {
+            var user = await _userService.GetUserByUsername(username);
+            if (user == null) {
+                return NoContent();
+            }
+
+            return Ok(user);
         }
 
         [HttpPost]
@@ -64,6 +80,19 @@ namespace UserHubAPI.Controllers
                 return Ok();
             else
                 return NotFound();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login(String username, String password) {
+            var result = await _userService.Login(username, password);
+
+            if (String.IsNullOrEmpty(result)){
+                return Unauthorized();
+            }
+
+            return Ok(result);
         }
     }
 }

@@ -1,10 +1,15 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using UserHubAPI.Entities.Data;
 using UserHubAPI.Repositories;
 using UserHubAPI.Repositories.IRepositories;
 using UserHubAPI.Services;
+using System.Security.Cryptography;
+using UserHubAPI.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +19,7 @@ builder.Services.AddDbContext<UserHubContext>(options =>
     options.UseSqlServer(connectionString));
 
 //    options.UseNpgsql(connectionString));
-// datetime column for postgres
+// Datetime column for postgres
 //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Register repositories
@@ -23,11 +28,24 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 // Register unit of work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Register other services
-//builder.Services.AddScoped<IUserService, UserService>();
-
 //dynamatically setup DI for services
-RegisterServices(builder.Services); 
+StartupConfig.RegisterServices(builder.Services);
+
+// Add JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        };
+        });
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -49,34 +67,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
 
-static void RegisterServices(IServiceCollection services)
-{
-    var assembly = Assembly.GetExecutingAssembly();
 
-    // Scan the assembly for types that implement the IService interface
-    var serviceTypes = assembly.GetTypes()
-        .Where(type => type.IsClass && !type.IsAbstract && ImplementsServiceInterface(type))
-        .ToList();
-
-    // Register the services
-    foreach (var serviceType in serviceTypes)
-    {
-        if (serviceType.Name.ToLower() != "unitofwork") {
-            var implementedInterface = serviceType.GetInterface($"I{serviceType.Name}");
-            services.AddScoped(implementedInterface, serviceType);
-        }
-    }
-}
-
-static bool ImplementsServiceInterface(Type type)
-{
-    var implementedInterfaces = type.GetInterfaces();
-    return implementedInterfaces.Any(interfaceType =>
-        interfaceType.Name.StartsWith("I") && interfaceType.Name.EndsWith(type.Name));
-}
