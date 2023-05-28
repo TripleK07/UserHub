@@ -33,7 +33,7 @@ namespace UserHubAPI.Services
             return await _userRepository.GetByIdAsync(id);
         }
 
-        public async Task<Base> Create(Users user)
+        public async Task<Users> Create(Users user)
         {
             var entity = _userRepository.Add(user);
             await _unitOfWork.CommitAsync();

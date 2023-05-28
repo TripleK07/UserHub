@@ -16,10 +16,6 @@ namespace UserHubAPI.Controllers
             _userService = userService;
         }
 
-        /// <summary>
-        /// to use custom route name
-        /// </summary>
-        /// <value>[Route("getUsers")]</value>
         [HttpGet]
         [Route("GetUsers")]
         [ProducesResponseType(200), ProducesResponseType(204)]
