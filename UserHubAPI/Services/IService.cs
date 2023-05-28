@@ -5,9 +5,9 @@ namespace UserHubAPI.Services
 	{
         Task<IEnumerable<T>> GetAll();
         Task<T> GetById(Guid id);
-        Task<Entities.Users> Create(T entity);
-        Task Update(T entity);
-        Task Delete(T entity);
+        Task<Entities.Base> Create(T entity);
+        Task<bool> Update(T entity);
+        Task<bool> Delete(Guid id);
         Task<bool> Exists(Guid id);
     }
 }

@@ -29,9 +29,8 @@ namespace UserHubAPI.Controllers
             return Ok(users);
         }
 
-
         [HttpGet]
-        [Route("GetUserByID")]
+        [Route("GetUserByID/{id}")]
         [ProducesResponseType(200), ProducesResponseType(204)]
         public async Task<IActionResult> GetUserByID(Guid ID)
         {
@@ -44,16 +43,31 @@ namespace UserHubAPI.Controllers
         [ProducesResponseType(201), ProducesResponseType(400)]
         public async Task<IActionResult> AddUser(Users user)
         {
-            var entity = await _userService.Create(user);
-            return CreatedAtAction("GetUserByID", entity.ID,entity);
+            var result = await _userService.Create(user);
+            return CreatedAtAction("GetUserByID", new { id = result.ID }, result);
         }
 
         [HttpPut]
         [Route("EditUser")]
-        [ProducesResponseType(200), ProducesResponseType(400)]
+        [ProducesResponseType(200), ProducesResponseType(400), ProducesResponseType(404)]
         public async Task<IActionResult> EditUser(Users user) {
-            await _userService.Update(user);
-            return Ok();
+            var result = await _userService.Update(user);
+            if (result)
+                return Ok();
+            else
+                return NotFound();
+        }
+
+        [HttpDelete]
+        [Route("DeleteUser")]
+        [ProducesResponseType(200), ProducesResponseType(400), ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteUser(Guid id) {
+            var result = await _userService.Delete(id);
+
+            if (result)
+                return Ok();
+            else
+                return NotFound();
         }
     }
 }

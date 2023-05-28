@@ -33,23 +33,37 @@ namespace UserHubAPI.Services
             return await _userRepository.GetByIdAsync(id);
         }
 
-        public async Task<Users> Create(Users user)
+        public async Task<Base> Create(Users user)
         {
             var entity = _userRepository.Add(user);
             await _unitOfWork.CommitAsync();
             return await Task.FromResult(entity.Entity as Users);
         }
 
-        public async Task Update(Users user)
+        public async Task<bool> Update(Users user)
         {
-            _userRepository.Update(user);
-            await _unitOfWork.CommitAsync();
+            var dbUser = await GetById(user.ID);
+            if (dbUser == null)
+                return false;
+            else
+            {
+                _userRepository.Update(user);
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
         }
 
-        public async Task Delete(Users user)
+        public async Task<bool> Delete(Guid id)
         {
-            _userRepository.Delete(user);
-            await _unitOfWork.CommitAsync();
+            var dbUser = await GetById(id);
+            if (dbUser == null)
+                return false;
+            else
+            {
+                _userRepository.Delete(dbUser);
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
         }
 
         public async Task<bool> Exists(Guid id)
