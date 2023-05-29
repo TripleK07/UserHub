@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace UserHubAPI.Helper
 {
-	public class StartupConfig
+	public static class StartupConfig
 	{
         private static bool ImplementsServiceInterface(Type type)
         {
@@ -25,7 +25,7 @@ namespace UserHubAPI.Helper
             // Register the services
             foreach (var serviceType in serviceTypes)
             {
-                if (serviceType.Name.ToLower() != "unitofwork")
+                if (!string.Equals(serviceType.Name, "UnitOfWork", StringComparison.OrdinalIgnoreCase))
                 {
                     var implementedInterface = serviceType.GetInterface($"I{serviceType.Name}");
 
@@ -49,4 +49,3 @@ namespace UserHubAPI.Helper
         }
     }
 }
-

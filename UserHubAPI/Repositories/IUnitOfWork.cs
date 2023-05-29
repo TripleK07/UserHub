@@ -12,4 +12,3 @@ namespace UserHubAPI.Repositories
         IRepository<T> GetRepository<T>() where T : class;
     }
 }
-

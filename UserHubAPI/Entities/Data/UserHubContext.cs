@@ -21,7 +21,6 @@ namespace UserHubAPI.Entities.Data
             /// you can defined connection here. But you cannot run ef commands in terminal.
             /// So we defined the config in program.cs
             /// </summary>
-
             //optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
             //optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
         }
@@ -39,20 +38,20 @@ namespace UserHubAPI.Entities.Data
 
                 if (createdDate != null && createdDate.ClrType == typeof(DateTime))
                 {
-                    createdDate.SetDefaultValueSql("GETDATE()");
+                    //createdDate.SetDefaultValueSql("GETDATE()");
+                    createdDate.SetDefaultValueSql("NOW()"); //for postgres
                 }
 
                 var modifiedDate = entityType.FindProperty("ModifiedDate");
 
                 if (modifiedDate != null && modifiedDate.ClrType == typeof(DateTime))
                 {
-                    modifiedDate.SetDefaultValueSql("GETDATE()");
+                    //modifiedDate.SetDefaultValueSql("GETDATE()");
+                    modifiedDate.SetDefaultValueSql("NOW()");
                 }
             }
         }
-
-        
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             ChangeTracker.DetectChanges();
 
@@ -68,7 +67,7 @@ namespace UserHubAPI.Entities.Data
                 }
             }
 
-            return base.SaveChangesAsync();
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         //entities

@@ -17,9 +17,12 @@ namespace UserHubAPI.Repositories
             _set = context.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(Guid id)
         {
-            return await _set.FindAsync(id);
+            T? entity = await _set.FindAsync(id);
+            if(entity !=null)
+                _context.Entry(entity).State = EntityState.Detached;
+            return entity;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -51,4 +54,3 @@ namespace UserHubAPI.Repositories
         }
     }
 }
-

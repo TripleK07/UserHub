@@ -30,6 +30,4 @@ namespace UserHubAPI.Repositories
             _context.Dispose();
         }
     }
-
 }
-

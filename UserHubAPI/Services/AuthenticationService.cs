@@ -13,11 +13,10 @@ namespace UserHubAPI.Services
             _userService = userService;
         }
 
-        public Users? AuthenticateUser(string username, string password)
+        public Users? AuthenticateUser(String loginID, string password)
         {
             // Retrieve the user from the user repository
-            return _userService.ValidateUserCredential(username, password).Result;
+            return _userService.ValidateUserCredential(loginID, password).Result;
         }
     }
 }
-

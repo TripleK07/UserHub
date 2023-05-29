@@ -8,7 +8,7 @@ namespace UserHubAPI.Helper
 {
     public static class JwtTokenGenerator
     {
-        private static IConfiguration _configuration;
+        private static readonly IConfiguration _configuration;
 
         static JwtTokenGenerator()
         {
@@ -29,7 +29,7 @@ namespace UserHubAPI.Helper
                     // Add additional claims as needed
                 };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
@@ -42,6 +42,4 @@ namespace UserHubAPI.Helper
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-
 }
-

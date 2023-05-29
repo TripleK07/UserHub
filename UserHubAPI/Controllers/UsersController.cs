@@ -31,9 +31,9 @@ namespace UserHubAPI.Controllers
         [HttpGet]
         [Route("GetUserByID/{id}")]
         [ProducesResponseType(200), ProducesResponseType(204)]
-        public async Task<IActionResult> GetUserByID(Guid ID)
+        public async Task<IActionResult> GetUserByID(Guid id)
         {
-            var users = await _userService.GetById(ID);
+            var users = await _userService.GetById(id);
             return Ok(users);
         }
 
@@ -85,8 +85,8 @@ namespace UserHubAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(String username, String password) {
-            var result = await _userService.Login(username, password);
+        public async Task<IActionResult> Login(String loginID, String password) {
+            var result = await _userService.Login(loginID, password);
 
             if (String.IsNullOrEmpty(result)){
                 return Unauthorized();
@@ -96,4 +96,3 @@ namespace UserHubAPI.Controllers
         }
     }
 }
-
