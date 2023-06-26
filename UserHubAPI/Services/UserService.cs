@@ -9,7 +9,7 @@ namespace UserHubAPI.Services
 {
     public interface IUserService : IService<Users>
     {
-        // Additional methods specific to the User entity
+        // Additional methods specific to the entity
         Task<Users?> GetUserByUsername(String userName);
         Task<Users?> ValidateUserCredential(String loginID, String password);
         Task<String> Login(String loginID, String password);

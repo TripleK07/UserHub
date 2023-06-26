@@ -73,5 +73,6 @@ namespace UserHubAPI.Entities.Data
         //entities
         public DbSet<Users> Users { get; set; } = null!;
         public DbSet<Roles> Roles { get; set; } = null!;
+        public DbSet<Menus> Menus { get; set; } = null!;
     }
 }

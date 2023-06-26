@@ -7,41 +7,40 @@ using UserHubAPI.Repositories.IRepositories;
 
 namespace UserHubAPI.Services
 {
-    public interface IRoleService : IService<Roles>
+    public interface IMenuService : IService<Menus>
     {
         // Additional methods specific to the entity
-        Task<Roles?> GetRoleByRoleName(String userName);
     }
 
-    public class RoleService : IRoleService
+    public class MenuService : IMenuService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Roles> _roleRepository;
+        private readonly IRepository<Menus> _menuRepository;
 
-        public RoleService(IUnitOfWork unitOfWork)
+        public MenuService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _roleRepository = _unitOfWork.GetRepository<Roles>();
+            _menuRepository = _unitOfWork.GetRepository<Menus>();
         }
 
-        public async Task<IEnumerable<Roles>> GetAll()
+        public async Task<IEnumerable<Menus>> GetAll()
         {
-            return await _roleRepository.GetAllAsync();
+            return await _menuRepository.GetAllAsync();
         }
 
-        public async Task<Roles?> GetById(Guid id)
+        public async Task<Menus?> GetById(Guid id)
         {
-            return await _roleRepository.GetByIdAsync(id);
+            return await _menuRepository.GetByIdAsync(id);
         }
 
-        public async Task<Roles> Create(Roles role)
+        public async Task<Menus> Create(Menus role)
         {
-            var entity = _roleRepository.Add(role);
+            var entity = _menuRepository.Add(role);
             await _unitOfWork.CommitAsync();
-            return await Task.FromResult(entity.Entity as Roles);
+            return await Task.FromResult(entity.Entity as Menus);
         }
 
-        public async Task<bool> Update(Roles role)
+        public async Task<bool> Update(Menus role)
         {
             var dbUser = await GetById(role.ID);
             if (dbUser == null)
@@ -50,7 +49,7 @@ namespace UserHubAPI.Services
             }
             else
             {
-                _roleRepository.Update(role);
+                _menuRepository.Update(role);
                 await _unitOfWork.CommitAsync();
                 return true;
             }
@@ -65,7 +64,7 @@ namespace UserHubAPI.Services
             }
             else
             {
-                _roleRepository.Delete(dbUser);
+                _menuRepository.Delete(dbUser);
                 await _unitOfWork.CommitAsync();
                 return true;
             }
@@ -73,12 +72,7 @@ namespace UserHubAPI.Services
 
         public async Task<bool> Exists(Guid id)
         {
-            return await _roleRepository.GetByIdAsync(id) != null;
-        }
-        public async Task<Roles?> GetRoleByRoleName(String roleName)
-        {
-            return await Task.FromResult(_roleRepository.GetAllAsync().Result
-                                        .FirstOrDefault(x => x.RoleName == roleName));
+            return await _menuRepository.GetByIdAsync(id) != null;
         }
 
         public void Dispose()
