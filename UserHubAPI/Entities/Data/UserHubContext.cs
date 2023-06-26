@@ -38,16 +38,16 @@ namespace UserHubAPI.Entities.Data
 
                 if (createdDate != null && createdDate.ClrType == typeof(DateTime))
                 {
-                    //createdDate.SetDefaultValueSql("GETDATE()");
-                    createdDate.SetDefaultValueSql("NOW()"); //for postgres
+                    createdDate.SetDefaultValueSql("GETDATE()");
+                    //createdDate.SetDefaultValueSql("NOW()"); //for postgres
                 }
 
                 var modifiedDate = entityType.FindProperty("ModifiedDate");
 
                 if (modifiedDate != null && modifiedDate.ClrType == typeof(DateTime))
                 {
-                    //modifiedDate.SetDefaultValueSql("GETDATE()");
-                    modifiedDate.SetDefaultValueSql("NOW()");
+                    modifiedDate.SetDefaultValueSql("GETDATE()");
+                    //modifiedDate.SetDefaultValueSql("NOW()");
                 }
             }
         }
@@ -72,5 +72,6 @@ namespace UserHubAPI.Entities.Data
 
         //entities
         public DbSet<Users> Users { get; set; } = null!;
+        public DbSet<Roles> Roles { get; set; } = null!;
     }
 }

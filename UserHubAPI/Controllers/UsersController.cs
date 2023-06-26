@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserHubAPI.Entities;
-using UserHubAPI.Helper;
 using UserHubAPI.Services;
 
 namespace UserHubAPI.Controllers
@@ -20,18 +19,16 @@ namespace UserHubAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetUsers")]
-        [ProducesResponseType(200), ProducesResponseType(204)]
-        public async Task<IActionResult> GetUsers()
+        [Route("GetAll")]
+        public async Task<IActionResult> GetAll()
         {
             var users = await _userService.GetAll();
             return Ok(users);
         }
 
         [HttpGet]
-        [Route("GetUserByID/{id}")]
-        [ProducesResponseType(200), ProducesResponseType(204)]
-        public async Task<IActionResult> GetUserByID(Guid id)
+        [Route("GetById/{id}")]
+        public async Task<IActionResult> GetById(Guid id)
         {
             var users = await _userService.GetById(id);
             return Ok(users);
@@ -39,7 +36,6 @@ namespace UserHubAPI.Controllers
 
         [HttpGet]
         [Route("GetUserByUserName/{username}")]
-        [ProducesResponseType(200), ProducesResponseType(204)]
         public async Task<IActionResult> GetUserByUserName(String username)
         {
             var user = await _userService.GetUserByUsername(username);
@@ -50,19 +46,18 @@ namespace UserHubAPI.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        [Route("AddUser")]
-        [ProducesResponseType(201), ProducesResponseType(400)]
-        public async Task<IActionResult> AddUser(Users user)
+        [Route("Create")]
+        public async Task<IActionResult> Create(Users user)
         {
             var result = await _userService.Create(user);
-            return CreatedAtAction("GetUserByID", new { id = result.ID }, result);
+            return CreatedAtAction("GetById", new { id = result.ID }, result);
         }
 
         [HttpPut]
-        [Route("EditUser")]
-        [ProducesResponseType(200), ProducesResponseType(400), ProducesResponseType(404)]
-        public async Task<IActionResult> EditUser(Users user) {
+        [Route("Update")]
+        public async Task<IActionResult> Update(Users user) {
             var result = await _userService.Update(user);
             if (result)
                 return Ok();
@@ -71,9 +66,9 @@ namespace UserHubAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteUser")]
-        [ProducesResponseType(200), ProducesResponseType(400), ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteUser(Guid id) {
+        [Route("Delete")]
+        //[ProducesResponseType(200), ProducesResponseType(400), ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(Guid id) {
             var result = await _userService.Delete(id);
 
             if (result)

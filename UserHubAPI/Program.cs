@@ -14,9 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add dbContext middleware
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<UserHubContext>(options =>
-    //options.UseSqlServer(connectionString));
-    options.UseNpgsql(connectionString));
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // Date time column for postgres
+    options.UseSqlServer(connectionString));
+    //options.UseNpgsql(connectionString));
+//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // Date time column for postgres
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));

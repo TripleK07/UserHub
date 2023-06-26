@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserHubAPI.Entities.Data;
 
@@ -11,9 +12,11 @@ using UserHubAPI.Entities.Data;
 namespace UserHubAPI.Migrations
 {
     [DbContext(typeof(UserHubContext))]
-    partial class UserHubContextModelSnapshot : ModelSnapshot
+    [Migration("20230626033355_roles")]
+    partial class roles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
