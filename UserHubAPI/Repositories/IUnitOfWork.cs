@@ -9,6 +9,8 @@ namespace UserHubAPI.Repositories
     {
         Task<int> CommitAsync();
 
+        UserHubContext GetContext();
+
         IRepository<T> GetRepository<T>() where T : class;
     }
 }

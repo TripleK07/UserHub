@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using UserHubAPI.Entities;
-using UserHubAPI.Helper;
+using UserHubAPI.Entities.Data;
 using UserHubAPI.Repositories;
 using UserHubAPI.Repositories.IRepositories;
 
@@ -11,17 +12,21 @@ namespace UserHubAPI.Services
     {
         // Additional methods specific to the entity
         Task<Roles?> GetRoleByRoleName(String userName);
+        Task<List<Roles>> GetAllIncludeMenu();
+        Task<Roles?> GetByIdIncludeMenu(Guid Id);
     }
 
     public class RoleService : IRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Roles> _roleRepository;
+        private readonly IRepository<RoleMenu> _roleMenuRepository;
 
         public RoleService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _roleRepository = _unitOfWork.GetRepository<Roles>();
+            _roleMenuRepository = _unitOfWork.GetRepository<RoleMenu>();
         }
 
         public async Task<IEnumerable<Roles>> GetAll()
@@ -50,6 +55,15 @@ namespace UserHubAPI.Services
             }
             else
             {
+                UserHubContext context = _unitOfWork.GetContext();
+                var roleMenus = context.RoleMenu.Where(rm => rm.RoleId == role.ID);
+                context.RoleMenu.RemoveRange(roleMenus);
+
+                foreach (RoleMenu rm in role.RoleMenu)
+                {
+                    _roleMenuRepository.Add(rm);
+                }
+
                 _roleRepository.Update(role);
                 await _unitOfWork.CommitAsync();
                 return true;
@@ -79,6 +93,18 @@ namespace UserHubAPI.Services
         {
             return await Task.FromResult(_roleRepository.GetAllAsync().Result
                                         .FirstOrDefault(x => x.RoleName == roleName));
+        }
+
+        public Task<List<Roles>> GetAllIncludeMenu()
+        {
+            UserHubContext _context = _unitOfWork.GetContext();
+            return _context.Roles.Include(r=> r.RoleMenu).ThenInclude(rm=> rm.Menu).ToListAsync();
+        }
+
+        public Task<Roles?> GetByIdIncludeMenu(Guid Id)
+        {
+            UserHubContext _context = _unitOfWork.GetContext();
+            return Task.FromResult(_context.Roles.Include(r=> r.RoleMenu).ThenInclude(rm=> rm.Menu).FirstOrDefault(r=> r.ID == Id));
         }
 
         public void Dispose()

@@ -78,6 +78,9 @@ builder.Services.AddSwaggerGen(c => {
         });
     });
 
+//deny Json infinite serialization that happen mostly in many-to-many relationship
+builder.Services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

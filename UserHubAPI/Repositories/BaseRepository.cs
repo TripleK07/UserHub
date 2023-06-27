@@ -33,17 +33,24 @@ namespace UserHubAPI.Repositories
         public EntityEntry<T> Add(T entity)
         {
             //to prevent adding GUID by user/swagger
-            _context.Entry(entity).Property("ID").CurrentValue = Guid.Empty;
-            _context.Entry(entity).Property("CreatedBy").CurrentValue = "Admin";
-            _context.Entry(entity).Property("ModifiedBy").CurrentValue = "Admin";
+            if(_context.Entry(entity).Properties.Any(p => p.Metadata.Name == "ID"))
+                _context.Entry(entity).Property("ID").CurrentValue = Guid.Empty;
+            if(_context.Entry(entity).Properties.Any(p => p.Metadata.Name == "CreatedBy"))
+                _context.Entry(entity).Property("CreatedBy").CurrentValue = "Admin";
+            if(_context.Entry(entity).Properties.Any(p => p.Metadata.Name == "ModifiedBy"))
+                _context.Entry(entity).Property("ModifiedBy").CurrentValue = "Admin";
             return _set.Add(entity);
         }
 
         public void Update(T entity)
         {
-            _context.Entry(entity).Property("CreatedBy").CurrentValue = "Admin";
-            _context.Entry(entity).Property("ModifiedDate").CurrentValue = DateTime.Now;
-            _context.Entry(entity).Property("ModifiedBy").CurrentValue = "Admin";
+            if(_context.Entry(entity).Properties.Any(p => p.Metadata.Name == "CreatedBy"))
+                _context.Entry(entity).Property("CreatedBy").CurrentValue = "Admin";
+            if(_context.Entry(entity).Properties.Any(p => p.Metadata.Name == "ModifiedDate"))
+                _context.Entry(entity).Property("ModifiedDate").CurrentValue = DateTime.Now;
+            if(_context.Entry(entity).Properties.Any(p => p.Metadata.Name == "ModifiedBy"))
+                _context.Entry(entity).Property("ModifiedBy").CurrentValue = "Admin";
+
             _set.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
         }

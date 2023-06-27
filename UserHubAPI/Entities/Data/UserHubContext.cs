@@ -29,6 +29,12 @@ namespace UserHubAPI.Entities.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<RoleMenu>().HasKey(rm => new {rm.RoleId, rm.MenuId });
+
+            modelBuilder.Entity<RoleMenu>().HasOne<Roles>(r=> r.Role).WithMany(m=> m.RoleMenu).HasForeignKey(rm=> rm.RoleId);
+
+            modelBuilder.Entity<RoleMenu>().HasOne<Menus>(m=> m.Menu).WithMany(r=> r.RoleMenu).HasForeignKey(rm=> rm.MenuId);
+
             //modelBuilder.Entity<Base>().Property(e => e.Autokey)
             //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
@@ -74,5 +80,6 @@ namespace UserHubAPI.Entities.Data
         public DbSet<Users> Users { get; set; } = null!;
         public DbSet<Roles> Roles { get; set; } = null!;
         public DbSet<Menus> Menus { get; set; } = null!;
+        public DbSet<RoleMenu> RoleMenu { get; set; } = null!;
     }
 }

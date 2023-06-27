@@ -14,6 +14,10 @@ namespace UserHubAPI.Repositories
             _context = context;
         }
 
+        public UserHubContext GetContext(){
+            return _context;
+        }
+
         // Create repositories as needed, passing the DbContext to their constructors
         public IRepository<T> GetRepository<T>() where T : class
         {

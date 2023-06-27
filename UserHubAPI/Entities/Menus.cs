@@ -13,12 +13,12 @@ namespace UserHubAPI.Entities
         [Required(ErrorMessage = "Menu description is required")]
         private string _menuDescription = null!;
 
-        private Guid _parentId = Guid.Empty;
-
         public String MenuName { get => _menuName; set => _menuName = value; }
 
         public String MenuDescription { get => _menuDescription; set => _menuDescription = value; }
 
-        public Guid ParentId {get => _parentId; set => _parentId = value; }
+        public Guid ParentId { get; set; } = Guid.Empty;
+
+        public ICollection<RoleMenu> RoleMenu { get; set; } = null!;
     }
 }

@@ -27,10 +27,26 @@ namespace UserHubAPI.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllIncludeMenu")]
+        public async Task<IActionResult> GetAllIncludeMenu()
+        {
+            var roles = await _roleService.GetAllIncludeMenu();
+            return Ok(roles);
+        }
+
+        [HttpGet]
         [Route("GetById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var roles = await _roleService.GetById(id);
+            return Ok(roles);
+        }
+
+        [HttpGet]
+        [Route("GetByIdIncludeMenu/{id}")]
+        public async Task<IActionResult> GetByIdIncludeMenu(Guid id)
+        {
+            var roles = await _roleService.GetByIdIncludeMenu(id);
             return Ok(roles);
         }
 
@@ -49,15 +65,20 @@ namespace UserHubAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> Create(Roles role)
+        public async Task<IActionResult> Create(RolesViewModel roleViewModel)
         {
+            Roles role = ConvertRoleViewModelToRole(roleViewModel);
+
             var result = await _roleService.Create(role);
             return CreatedAtAction("GetById", new { id = result.ID }, result);
         }
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(Roles role) {
+        public async Task<IActionResult> Update(RolesViewModel roleViewModel)
+        {
+            Roles role = ConvertRoleViewModelToRole(roleViewModel);
+
             var result = await _roleService.Update(role);
             if (result)
                 return Ok();
@@ -74,6 +95,33 @@ namespace UserHubAPI.Controllers
                 return Ok();
             else
                 return NotFound();
+        }
+
+        private static Roles ConvertRoleViewModelToRole(RolesViewModel roleViewModel)
+        {
+            List<RoleMenu> menuList = new();
+            foreach (Guid menu in roleViewModel.Menus)
+            {
+                 RoleMenu rm = new()
+                 {
+                    RoleId = roleViewModel.ID,
+                    MenuId = menu,
+                 };
+
+                 menuList.Add(rm);
+            }
+
+            Roles role = new()
+            {
+                ID = roleViewModel.ID,
+                RoleName = roleViewModel.RoleName,
+                RoleDescription = roleViewModel.RoleDescription,
+                IsActive = roleViewModel.IsActive,
+                RecordStatus = roleViewModel.RecordStatus,
+                RoleMenu = menuList
+            };
+
+            return role;
         }
     }
 }

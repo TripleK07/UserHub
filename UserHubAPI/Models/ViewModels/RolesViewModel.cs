@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace UserHubAPI.Entities
 {
-    public class Roles : Base
+    public class RolesViewModel : Base
     {
         [Required(ErrorMessage = "Role name is required")]
         private string _roleName = null!;
@@ -17,6 +17,6 @@ namespace UserHubAPI.Entities
 
         public String RoleDescription { get => _roleDescription; set => _roleDescription = value; }
 
-        public ICollection<RoleMenu> RoleMenu { get; set; } = null!;
+        public ICollection<Guid> Menus { get; set; } = null!;
     }
 }
