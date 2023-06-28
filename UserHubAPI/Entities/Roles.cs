@@ -18,5 +18,7 @@ namespace UserHubAPI.Entities
         public String RoleDescription { get => _roleDescription; set => _roleDescription = value; }
 
         public ICollection<RoleMenu> RoleMenu { get; set; } = null!;
+
+        public ICollection<UserRole> UserRole { get; set; } = null!;
     }
 }

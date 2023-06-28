@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserHubAPI.Entities;
+using UserHubAPI.Models;
 using UserHubAPI.Services;
 
 namespace UserHubAPI.Controllers

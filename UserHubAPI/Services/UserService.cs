@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using UserHubAPI.Entities;
+using UserHubAPI.Entities.Data;
 using UserHubAPI.Helper;
 using UserHubAPI.Repositories;
 using UserHubAPI.Repositories.IRepositories;
@@ -20,11 +21,13 @@ namespace UserHubAPI.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Users> _userRepository;
         private readonly AuthenticationService _authentication;
+         private readonly IRepository<UserRole> _userRoleRepository;
 
         public UserService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _userRepository = _unitOfWork.GetRepository<Users>();
+            _userRoleRepository = _unitOfWork.GetRepository<UserRole>();
             _authentication = new AuthenticationService(this);
         }
 
@@ -57,6 +60,15 @@ namespace UserHubAPI.Services
             }
             else
             {
+                UserHubContext context = _unitOfWork.GetContext();
+                var userRoles = context.UserRole.Where(ur => ur.UserId == user.ID);
+                context.UserRole.RemoveRange(userRoles);
+
+                foreach (UserRole ur in user.UserRole)
+                {
+                    _userRoleRepository.Add(ur);
+                }
+
                 _userRepository.Update(user);
                 await _unitOfWork.CommitAsync();
                 return true;

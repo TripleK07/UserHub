@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserHubAPI.Entities;
+using UserHubAPI.Models;
 using UserHubAPI.Services;
 
 namespace UserHubAPI.Controllers
@@ -49,15 +50,20 @@ namespace UserHubAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> Create(Users user)
+        public async Task<IActionResult> Create(UsersViewModel userViewModel)
         {
+            Users user = ConvertUserViewModelToUser(userViewModel);
+
             var result = await _userService.Create(user);
             return CreatedAtAction("GetById", new { id = result.ID }, result);
         }
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(Users user) {
+        public async Task<IActionResult> Update(UsersViewModel userViewModel)
+        {
+            Users user = ConvertUserViewModelToUser(userViewModel);
+
             var result = await _userService.Update(user);
             if (result)
                 return Ok();
@@ -68,7 +74,8 @@ namespace UserHubAPI.Controllers
         [HttpDelete]
         [Route("Delete")]
         //[ProducesResponseType(200), ProducesResponseType(400), ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(Guid id) {
+        public async Task<IActionResult> Delete(Guid id)
+        {
             var result = await _userService.Delete(id);
 
             if (result)
@@ -80,7 +87,8 @@ namespace UserHubAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(String loginID, String password) {
+        public async Task<IActionResult> Login(String loginID, String password)
+        {
             var result = await _userService.Login(loginID, password);
 
             if (String.IsNullOrEmpty(result)){
@@ -88,6 +96,35 @@ namespace UserHubAPI.Controllers
             }
 
             return Ok(result);
+        }
+
+        private static Users ConvertUserViewModelToUser(UsersViewModel userViewModel)
+        {
+            List<UserRole> userRoleList = new();
+            foreach (Guid role in userViewModel.Roles)
+            {
+                 UserRole ur = new()
+                 {
+                    RoleId = userViewModel.ID,
+                    UserId = role
+                 };
+
+                 userRoleList.Add(ur);
+            }
+
+            Users user = new()
+            {
+                ID = userViewModel.ID,
+                UserName = userViewModel.UserName,
+                LoginID = userViewModel.LoginID,
+                Password = userViewModel.Password,
+                Email = userViewModel.Email,
+                UserRole = userRoleList,
+                IsActive = userViewModel.IsActive,
+                RecordStatus = userViewModel.RecordStatus,
+            };
+
+            return user;
         }
     }
 }

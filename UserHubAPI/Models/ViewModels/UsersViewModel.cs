@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using UserHubAPI.Entities;
 
-namespace UserHubAPI.Entities
+namespace UserHubAPI.Models
 {
-    public class Users : Base
+    public class UsersViewModel : Base
     {
         [Required(ErrorMessage = "Username is required")]
         private string _userName = null!;
@@ -27,6 +28,6 @@ namespace UserHubAPI.Entities
 
         public String Email { get => _email; set => _email = value; }
 
-        public ICollection<UserRole> UserRole { get; set; } = null!;
+        public ICollection<Guid> Roles { get; set; } = null!;
     }
 }
