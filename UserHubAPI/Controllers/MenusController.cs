@@ -34,7 +34,6 @@ namespace UserHubAPI.Controllers
             return Ok(Menus);
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> Create(Menus role)

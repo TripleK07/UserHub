@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using UserHubAPI.Entities;
 using UserHubAPI.Entities.Data;
 using UserHubAPI.Helper;
@@ -14,6 +15,8 @@ namespace UserHubAPI.Services
         Task<Users?> GetUserByUsername(String userName);
         Task<Users?> ValidateUserCredential(String loginID, String password);
         Task<String> Login(String loginID, String password);
+        Task<List<Users>> GetAllIncludeRole();
+        Task<Users?> GetByIdIncludeRole(Guid Id);
     }
 
     public class UserService : IUserService
@@ -117,9 +120,23 @@ namespace UserHubAPI.Services
             return "";
         }
 
+        public Task<List<Users>> GetAllIncludeRole()
+        {
+            UserHubContext _context = _unitOfWork.GetContext();
+            return _context.Users.Include(ur => ur.UserRole).ThenInclude(ur => ur.Role).ToListAsync();
+        }
+
+        public Task<Users?> GetByIdIncludeRole(Guid Id)
+        {
+            UserHubContext _context = _unitOfWork.GetContext();
+            return Task.FromResult(_context.Users.Include(u => u.UserRole).ThenInclude(ur => ur.Role).FirstOrDefault(r => r.ID == Id));
+        }
+
         public void Dispose()
         {
             _unitOfWork.Dispose();
         }
+
+       
     }
 }

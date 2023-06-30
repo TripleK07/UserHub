@@ -62,8 +62,7 @@ namespace UserHubAPI.Controllers
 
             return Ok(user);
         }
-
-        [AllowAnonymous]
+    
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> Create(RolesViewModel roleViewModel)

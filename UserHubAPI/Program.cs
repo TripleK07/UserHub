@@ -8,6 +8,9 @@ using UserHubAPI.Repositories;
 using UserHubAPI.Repositories.IRepositories;
 using UserHubAPI.Helper;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +86,13 @@ builder.Services.AddMvc().AddJsonOptions(options => options.JsonSerializerOption
 
 var app = builder.Build();
 
+//temporary solution for seeding data into database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<UserHubContext>();
+    context.InitialData();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -95,7 +105,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

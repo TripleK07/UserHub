@@ -1,19 +1,21 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 
 namespace UserHubAPI.Entities.Data
 {
-	public class UserHubContext : DbContext
-	{
+    public class UserHubContext : DbContext
+    {
         private readonly IConfiguration _configuration;
 
         public UserHubContext(DbContextOptions<UserHubContext> options, IConfiguration configuration)
         : base(options)
-		{
+        {
             _configuration = configuration;
-		}
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -29,11 +31,15 @@ namespace UserHubAPI.Entities.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<RoleMenu>().HasKey(rm => new {rm.RoleId, rm.MenuId });
+            //role-menu setup
+            modelBuilder.Entity<RoleMenu>().HasKey(rm => new { rm.RoleId, rm.MenuId });
+            modelBuilder.Entity<RoleMenu>().HasOne<Roles>(r => r.Role).WithMany(m => m.RoleMenu).HasForeignKey(rm => rm.RoleId);
+            modelBuilder.Entity<RoleMenu>().HasOne<Menus>(m => m.Menu).WithMany(r => r.RoleMenu).HasForeignKey(rm => rm.MenuId);
 
-            modelBuilder.Entity<RoleMenu>().HasOne<Roles>(r=> r.Role).WithMany(m=> m.RoleMenu).HasForeignKey(rm=> rm.RoleId);
-
-            modelBuilder.Entity<RoleMenu>().HasOne<Menus>(m=> m.Menu).WithMany(r=> r.RoleMenu).HasForeignKey(rm=> rm.MenuId);
+            //user-role setup
+            modelBuilder.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
+            modelBuilder.Entity<UserRole>().HasOne<Users>(u => u.User).WithMany(r => r.UserRole).HasForeignKey(ur => ur.UserId);
+            modelBuilder.Entity<UserRole>().HasOne<Roles>(r => r.Role).WithMany(r => r.UserRole).HasForeignKey(ur => ur.RoleId);
 
             //modelBuilder.Entity<Base>().Property(e => e.Autokey)
             //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
@@ -74,6 +80,85 @@ namespace UserHubAPI.Entities.Data
             }
 
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public void InitialData()
+        {
+            Guid menuId = Guid.NewGuid();
+            Guid roleId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
+
+            if (!Users.Any())
+            {
+                Users.Add(new Users
+                {
+                    ID = userId,
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = "Admin",
+                    ModifiedDate = DateTime.Now,
+                    Email = "triplek07@gmail.com",
+                    IsActive = true,
+                    RecordStatus = 1,
+                    LoginID = "kkk",
+                    Password = "1qb1pHE8EwvGI6dRUQIu4ShK/hAZi16wASvI6DedV6M=",
+                    UserName = "Khant Ko Ko",
+                });
+            }
+
+            if (!Menus.Any())
+            {
+                Menus.Add(new Menus
+                {
+                    ID = menuId,
+                    MenuName = "Setup",
+                    MenuDescription = "Setup",
+                    ParentId = Guid.Empty,
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = "Admin",
+                    ModifiedDate = DateTime.Now,
+                    IsActive = true,
+                    RecordStatus = 1,
+                });
+            }
+
+            if (!Roles.Any())
+            {
+                Roles.Add(new Roles
+                {
+                    ID = roleId,
+                    RoleName = "Admin",
+                    RoleDescription = "Admin",
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    IsActive = true,
+                    ModifiedBy = "Admin",
+                    ModifiedDate = DateTime.Now,
+                    RecordStatus = 1,
+                });
+            }
+
+            if (!RoleMenu.Any())
+            {
+                RoleMenu.Add(new RoleMenu
+                {
+                    MenuId = menuId,
+                    RoleId = roleId,
+                });
+            }
+
+            if (!UserRole.Any())
+            {
+                UserRole.Add(new UserRole
+                {
+                    UserId = userId,
+                    RoleId = roleId,
+                });
+            }
+
+            SaveChanges();
+
         }
 
         //entities

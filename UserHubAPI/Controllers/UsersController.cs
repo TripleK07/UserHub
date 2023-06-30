@@ -28,11 +28,27 @@ namespace UserHubAPI.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllIncludeRole")]
+        public async Task<IActionResult> GetAllIncludeRole()
+        {
+            var roles = await _userService.GetAllIncludeRole();
+            return Ok(roles);
+        }
+
+        [HttpGet]
         [Route("GetById/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var users = await _userService.GetById(id);
             return Ok(users);
+        }
+
+        [HttpGet]
+        [Route("GetByIdIncludeRole/{id}")]
+        public async Task<IActionResult> GetByIdIncludeRole(Guid id)
+        {
+            var roles = await _userService.GetByIdIncludeRole(id);
+            return Ok(roles);
         }
 
         [HttpGet]
@@ -105,8 +121,8 @@ namespace UserHubAPI.Controllers
             {
                  UserRole ur = new()
                  {
-                    RoleId = userViewModel.ID,
-                    UserId = role
+                    RoleId = role,
+                    UserId = userViewModel.ID
                  };
 
                  userRoleList.Add(ur);
