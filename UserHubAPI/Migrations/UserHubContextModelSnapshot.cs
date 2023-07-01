@@ -75,7 +75,7 @@ namespace UserHubAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Menus");
+                    b.ToTable("Menus", (string)null);
                 });
 
             modelBuilder.Entity("UserHubAPI.Entities.RoleMenu", b =>
@@ -90,7 +90,7 @@ namespace UserHubAPI.Migrations
 
                     b.HasIndex("MenuId");
 
-                    b.ToTable("RoleMenu");
+                    b.ToTable("RoleMenu", (string)null);
                 });
 
             modelBuilder.Entity("UserHubAPI.Entities.Roles", b =>
@@ -137,7 +137,7 @@ namespace UserHubAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("UserHubAPI.Entities.UserRole", b =>
@@ -152,7 +152,7 @@ namespace UserHubAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRole");
+                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("UserHubAPI.Entities.Users", b =>
@@ -207,7 +207,7 @@ namespace UserHubAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("UserHubAPI.Entities.RoleMenu", b =>

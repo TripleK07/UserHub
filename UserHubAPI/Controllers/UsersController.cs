@@ -13,10 +13,12 @@ namespace UserHubAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMenuService _menuService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IMenuService menuService)
         {
             _userService = userService;
+            _menuService = menuService;
         }
 
         [HttpGet]
@@ -105,11 +107,18 @@ namespace UserHubAPI.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(String loginID, String password)
         {
-            var result = await _userService.Login(loginID, password);
+            var token = await _userService.Login(loginID, password);
 
-            if (String.IsNullOrEmpty(result)){
+            if (String.IsNullOrEmpty(token)){
                 return Unauthorized();
             }
+
+            var menuList = await _menuService.GetMenusByUser(loginID);
+
+            LoginResponse result = new(){
+                Token = token,
+                Menus = menuList
+            };
 
             return Ok(result);
         }

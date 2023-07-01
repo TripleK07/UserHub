@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-
 namespace UserHubAPI.Entities
 {
     public class Menus : Base
@@ -23,6 +22,6 @@ namespace UserHubAPI.Entities
 
         public String? ActionName { get; set; }
 
-        public ICollection<RoleMenu> RoleMenu { get; set; } = null!;
+        public ICollection<RoleMenu>? RoleMenu { get; set; }
     }
 }

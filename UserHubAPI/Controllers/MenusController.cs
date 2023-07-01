@@ -36,16 +36,16 @@ namespace UserHubAPI.Controllers
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> Create(Menus role)
+        public async Task<IActionResult> Create(Menus menu)
         {
-            var result = await _menuService.Create(role);
+            var result = await _menuService.Create(menu);
             return CreatedAtAction("GetById", new { id = result.ID }, result);
         }
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(Menus role) {
-            var result = await _menuService.Update(role);
+        public async Task<IActionResult> Update(Menus menu) {
+            var result = await _menuService.Update(menu);
             if (result)
                 return Ok();
             else

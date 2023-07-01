@@ -19,6 +19,6 @@ namespace UserHubAPI.Entities
 
         public ICollection<RoleMenu> RoleMenu { get; set; } = null!;
 
-        public ICollection<UserRole> UserRole { get; set; } = null!;
+        public ICollection<UserRole>? UserRole { get; set; }
     }
 }
