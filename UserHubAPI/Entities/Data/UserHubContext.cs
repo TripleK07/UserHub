@@ -84,7 +84,10 @@ namespace UserHubAPI.Entities.Data
 
         public void InitialData()
         {
-            Guid menuId = Guid.NewGuid();
+            Guid setupMenuId = Guid.NewGuid();
+            Guid userMenuId = Guid.NewGuid();
+            Guid roleMenuId = Guid.NewGuid();
+            Guid menuMenuId = Guid.NewGuid();
             Guid roleId = Guid.NewGuid();
             Guid userId = Guid.NewGuid();
 
@@ -110,7 +113,7 @@ namespace UserHubAPI.Entities.Data
             {
                 Menus.Add(new Menus
                 {
-                    ID = menuId,
+                    ID = setupMenuId,
                     MenuName = "Setup",
                     MenuDescription = "Setup",
                     ParentId = Guid.Empty,
@@ -120,6 +123,54 @@ namespace UserHubAPI.Entities.Data
                     ModifiedDate = DateTime.Now,
                     IsActive = true,
                     RecordStatus = 1,
+                });
+
+                Menus.Add(new Menus
+                {
+                    ID = userMenuId,
+                    MenuName = "User",
+                    MenuDescription = "User",
+                    ParentId = setupMenuId,
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = "Admin",
+                    ModifiedDate = DateTime.Now,
+                    IsActive = true,
+                    RecordStatus = 1,
+                    ActionName = "Index",
+                    ControllerName = "User"
+                });
+
+                Menus.Add(new Menus
+                {
+                    ID = roleMenuId,
+                    MenuName = "Role",
+                    MenuDescription = "Role",
+                    ParentId = setupMenuId,
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = "Admin",
+                    ModifiedDate = DateTime.Now,
+                    IsActive = true,
+                    RecordStatus = 1,
+                    ActionName = "Index",
+                    ControllerName = "Role"
+                });
+
+                Menus.Add(new Menus
+                {
+                    ID = menuMenuId,
+                    MenuName = "Menu",
+                    MenuDescription = "Menu",
+                    ParentId = setupMenuId,
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = "Admin",
+                    ModifiedDate = DateTime.Now,
+                    IsActive = true,
+                    RecordStatus = 1,
+                    ActionName = "Index",
+                    ControllerName = "Menu"
                 });
             }
 
@@ -143,7 +194,25 @@ namespace UserHubAPI.Entities.Data
             {
                 RoleMenu.Add(new RoleMenu
                 {
-                    MenuId = menuId,
+                    MenuId = setupMenuId,
+                    RoleId = roleId,
+                });
+
+                RoleMenu.Add(new RoleMenu
+                {
+                    MenuId = userMenuId,
+                    RoleId = roleId,
+                });
+
+                RoleMenu.Add(new RoleMenu
+                {
+                    MenuId = roleMenuId,
+                    RoleId = roleId,
+                });
+
+                RoleMenu.Add(new RoleMenu
+                {
+                    MenuId = menuMenuId,
                     RoleId = roleId,
                 });
             }
@@ -158,7 +227,6 @@ namespace UserHubAPI.Entities.Data
             }
 
             SaveChanges();
-
         }
 
         //entities
