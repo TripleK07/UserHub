@@ -136,7 +136,5 @@ namespace UserHubAPI.Services
         {
             _unitOfWork.Dispose();
         }
-
-       
     }
 }

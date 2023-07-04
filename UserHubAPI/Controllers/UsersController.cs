@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Reflection;
+using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserHubAPI.Entities;
@@ -7,7 +8,7 @@ using UserHubAPI.Services;
 
 namespace UserHubAPI.Controllers
 {
-    [Authorize]
+//    [Authorize]
     [ApiController]
     [Route("api/v1/user")]
     public class UsersController : ControllerBase
@@ -105,15 +106,15 @@ namespace UserHubAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(String loginID, String password)
+        public async Task<IActionResult> Login(LoginRequest model)
         {
-            var token = await _userService.Login(loginID, password);
+            var token = await _userService.Login(model.Username, model.Password);
 
             if (String.IsNullOrEmpty(token)){
                 return Unauthorized();
             }
 
-            var menuList = await _menuService.GetMenusByUser(loginID);
+            var menuList = await _menuService.GetMenusByUser(model.Username);
 
             LoginResponse result = new(){
                 Token = token,

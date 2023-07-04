@@ -15,11 +15,11 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add dbContext middleware
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("AZURE_POSTGRESQL_CONNECTIONSTRING") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<UserHubContext>(options =>
-    options.UseSqlServer(connectionString));
-    //options.UseNpgsql(connectionString));
-//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // Date time column for postgres
+    //options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // Date time column for postgres
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
@@ -50,36 +50,36 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen( c=> c.EnableAnnotations() );
+//builder.Services.AddSwaggerGen( c=> c.EnableAnnotations() );
 
 //logging
 builder.Host.UseNLog();
 
 //swagger UI to use JWT
-builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo {
-        Title = "User Hub API", Version = "v1"
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() {
-        Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer your_token\"",
-    });
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-            {
-                new OpenApiSecurityScheme {
-                    Reference = new OpenApiReference {
-                        Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
-            }
-        });
-    });
+//builder.Services.AddSwaggerGen(c => {
+//    c.SwaggerDoc("v1", new OpenApiInfo {
+//        Title = "User Hub API", Version = "v1"
+//    });
+//    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() {
+//        Name = "Authorization",
+//            Type = SecuritySchemeType.ApiKey,
+//            Scheme = "Bearer",
+//            BearerFormat = "JWT",
+//            In = ParameterLocation.Header,
+//            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer your_token\"",
+//    });
+//        c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+//            {
+//                new OpenApiSecurityScheme {
+//                    Reference = new OpenApiReference {
+//                        Type = ReferenceType.SecurityScheme,
+//                            Id = "Bearer"
+//                    }
+//                },
+//                Array.Empty<string>()
+//            }
+//        });
+//    });
 
 //deny Json infinite serialization that happen mostly in many-to-many relationship
 builder.Services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
