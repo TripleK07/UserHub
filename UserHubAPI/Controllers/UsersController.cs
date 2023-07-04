@@ -105,15 +105,16 @@ namespace UserHubAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(String loginID, String password)
+        public async Task<IActionResult> Login(LoginRequest model)
         {
-            var token = await _userService.Login(loginID, password);
+            var token = await _userService.Login(model.Username, model.Password);
 
-            if (String.IsNullOrEmpty(token)){
+            if (String.IsNullOrEmpty(token))
+            {
                 return Unauthorized();
             }
 
-            var menuList = await _menuService.GetMenusByUser(loginID);
+            var menuList = await _menuService.GetMenusByUser(model.Username);
 
             LoginResponse result = new(){
                 Token = token,

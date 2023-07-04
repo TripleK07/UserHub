@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Set up the configuration
+//builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+//                   .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
 // Add dbContext middleware
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<UserHubContext>(options =>
