@@ -28,6 +28,6 @@ namespace UserHubAPI.Models
 
         public String Email { get => _email; set => _email = value; }
 
-        public ICollection<Guid> Roles { get; set; } = null!;
+        public ICollection<Guid>? Roles { get; set; } = null!;
     }
 }

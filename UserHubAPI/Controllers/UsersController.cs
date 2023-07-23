@@ -127,17 +127,21 @@ namespace UserHubAPI.Controllers
         private static Users ConvertUserViewModelToUser(UsersViewModel userViewModel)
         {
             List<UserRole> userRoleList = new();
-            foreach (Guid role in userViewModel.Roles)
+
+            if(userViewModel.Roles != null)
             {
-                 UserRole ur = new()
-                 {
-                    RoleId = role,
-                    UserId = userViewModel.ID
-                 };
+                foreach (Guid role in userViewModel.Roles)
+                {
+                    UserRole ur = new()
+                    {
+                        RoleId = role,
+                        UserId = userViewModel.ID
+                    };
 
-                 userRoleList.Add(ur);
+                    userRoleList.Add(ur);
+                }
             }
-
+            
             Users user = new()
             {
                 ID = userViewModel.ID,

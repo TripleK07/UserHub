@@ -27,6 +27,6 @@ namespace UserHubAPI.Entities
 
         public String Email { get => _email; set => _email = value; }
 
-        public ICollection<UserRole> UserRole { get; set; } = null!;
+        public ICollection<UserRole>? UserRole { get; set; } = null!;
     }
 }
