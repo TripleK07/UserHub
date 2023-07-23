@@ -63,15 +63,19 @@ namespace UserHubAPI.Services
             }
             else
             {
-                UserHubContext context = _unitOfWork.GetContext();
-                var userRoles = context.UserRole.Where(ur => ur.UserId == user.ID);
-                context.UserRole.RemoveRange(userRoles);
+                if (user.UserRole != null && user.UserRole.Count > 0) {
+                    UserHubContext context = _unitOfWork.GetContext();
+                    var userRoles = context.UserRole.Where(ur => ur.UserId == user.ID);
+                    context.UserRole.RemoveRange(userRoles);
 
-                foreach (UserRole ur in user.UserRole)
-                {
-                    _userRoleRepository.Add(ur);
+                    foreach (UserRole ur in user.UserRole)
+                    {
+                        _userRoleRepository.Add(ur);
+                    }
                 }
-
+                
+                //hash password
+                user.Password = Utility.HashPassword(user.Password);
                 _userRepository.Update(user);
                 await _unitOfWork.CommitAsync();
                 return true;
